@@ -1,6 +1,8 @@
 import { useSession, signIn, signOut, getSession } from "next-auth/react"
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
+import Navbar from "../components/navbar";
+import Sidebar from "../components/sidebar";
 export default function Component() {
   const { data: session, status } = useSession();
   const [message, setMessage] = useState()
@@ -27,12 +29,14 @@ export default function Component() {
     fetchData()
   },[])
  if (session) {
-    console.log(session);
+    // console.log(session);
    return (
       <>
-        Signed in as {session.user.username} <br />
+        {/* Signed in as {session.user.username} <br />
          {message? message.message + " : " + message.test:""}
-        <button onClick={() => signOut()}>Sign out</button>
+        <button onClick={() => signOut()}>Sign out</button> */}
+        <Navbar/>
+        <Sidebar as="/protected"/>
       </>
     )
 }
