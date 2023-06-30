@@ -7,9 +7,9 @@ import QRCodeEntry from "../../../models/qrCodeEntry";
 
 import { authOptions } from "../auth/[...nextauth]";
 import { QRCodeCanvas } from "@loskir/styled-qr-code-node";
-import { join } from "path";
+// import { join } from "path";
 import archiver from "archiver";
-import fs from "fs";
+// import fs from "fs";
 import admin from "firebase-admin";
 import { Generate_UID_16digit, Activation_code } from "../../../lib/helper";
 
