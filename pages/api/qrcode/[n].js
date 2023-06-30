@@ -7,7 +7,11 @@ import QRCodeZip from "../../../models/qrCodeZip";
 import admin from "firebase-admin";
 
 // Initialize Firebase Admin SDK
-const serviceAccount = require("../../../qr-code-2fe95-firebase-adminsdk-srbst-39b91e1134.json"); // Replace with the path to your service account key file
+
+const serviceAccount = JSON.parse(
+  process.env.FIREBASE_SERVICE_ACCOUNT_KEY 
+);// Replace with the path to your service account key file
+
 const firebaseConfig = {
   credential: admin.credential.cert(serviceAccount),
   storageBucket: "qr-code-2fe95.appspot.com", // Replace with your Firebase Storage bucket name
