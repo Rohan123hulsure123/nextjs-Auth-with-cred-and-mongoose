@@ -57,6 +57,6 @@ export default async function handler(req, res) {
     }
   } else {
     // Not Signed in
-    res.status(401).json({ message: "A kon a tu" });
+    res.status(401).json({ message: "Unauthorized" });
   }
 }

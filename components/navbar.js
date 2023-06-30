@@ -10,7 +10,7 @@ export default function Navbar() {
 //   const router = useRouter();
 
   return (
-    <nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+    <nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700" style={{backgroundColor:'#7d5194',color:'white'}}>
       <div className="px-3 py-3 lg:px-5 lg:pl-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-start">
@@ -38,30 +38,26 @@ export default function Navbar() {
             </button>
             <a href="#" className="flex ml-2 md:mr-24">
               <img
-                src="https://flowbite.com/docs/images/logo.svg"
-                className="h-8 mr-3"
+                src="/logo.png"
+                className="h-12  mr-3"
                 alt="FlowBite Logo"
               />
-              <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
+              <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white ">
                 PawFurEver
               </span>
             </a>
           </div>
-          {/* <div className="flex items-center">
+          <div className="flex items-center">
             <div className="flex items-center ml-3">
               <div>
                 <button
                   type="button"
-                  className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+                  className="flex text-sm  rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
                   aria-expanded="false"
-                  data-dropdown-toggle="dropdown-user"
+                  // data-dropdown-toggle="dropdown-user"
                 >
                   <span className="sr-only">Open user menu</span>
-                  <img
-                    className="w-8 h-8 rounded-full"
-                    src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-                    alt="user photo"
-                  />
+                  <span className="ml-3 font text-xl ">Welcome {session.user.username}</span>
                 </button>
               </div>
               <div
@@ -122,7 +118,7 @@ export default function Navbar() {
                 </ul>
               </div>
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
     </nav>

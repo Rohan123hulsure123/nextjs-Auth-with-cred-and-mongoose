@@ -8,7 +8,7 @@ export default function Sidebar({as}) {
   const { data: session, status } = useSession();
 //   const [message, setMessage] = useState();
   const  router  = useRouter();
-  console.log(as);
+  // console.log(as);
 
   return (
     <aside
@@ -18,7 +18,7 @@ export default function Sidebar({as}) {
         >
           <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
             <ul className="space-y-2 font-medium">
-              <li className={as == "/dashboard" ?"bg-gray-200 rounded-lg" : ""}>
+              <li className={as == "/dashboard" ?"bg-gray-300 rounded-lg" : ""}>
                 <Link
                   href="/dashboard"
                   className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -36,9 +36,9 @@ export default function Sidebar({as}) {
                   <span className="ml-3">Dashboard</span>
                 </Link>
               </li>
-              <li  className={as == "/protected" ?"bg-gray-100 rounded-lg" : ""}>
+              <li  className={as == "/generateqrcode" ?"bg-gray-300 rounded-lg" : ""}>
                 <Link
-                  href="/protected"
+                  href="/generateqrcode"
                   className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   <svg
@@ -56,9 +56,9 @@ export default function Sidebar({as}) {
                   {/* <span className="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">Pro</span> */}
                 </Link>
               </li>
-              <li  className={as == "/" ?"bg-gray-100 rounded-lg" : ""}>
+              <li  className={as == "/downloadqrcode" ?"bg-gray-300 rounded-lg" : ""}>
                 <Link
-                  href="#"
+                  href="/downloadqrcode"
                   className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   <svg

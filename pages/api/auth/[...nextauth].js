@@ -31,8 +31,8 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        dbConnect();
-        // Add logic here to look up the user from the credentials supplied
+        return await dbConnect().then(async ()=>{
+          // Add logic here to look up the user from the credentials supplied
         const user = await User.findOne({ email: credentials.email });
         // console.log(user);
         // console.log(process.env.NEXTAUTH_SECRET);
@@ -48,6 +48,11 @@ export const authOptions = {
         } else {
           return null;
         }
+        }).catch(err=>{
+          console.error(err);
+          return null;
+        });
+        
       },
     }),
   ],
