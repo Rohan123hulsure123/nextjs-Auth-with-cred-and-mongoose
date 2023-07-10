@@ -5,7 +5,7 @@ export default async function handler(req, res) {
   const { method } = req;
   const session = await getServerSession(req, res, authOptions);
 
-  if (session) {
+  if (session?.user.role === 'admin') {
     // console.log(session);
     // // Signed in
     // console.log("Session", JSON.stringify(session, null, 2));

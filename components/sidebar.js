@@ -20,7 +20,7 @@ export default function Sidebar({as}) {
             <ul className="space-y-2 font-medium">
               <li className={as == "/dashboard" ?"bg-gray-300 rounded-lg" : ""}>
                 <Link
-                  href="/dashboard"
+                  href="/admin/dashboard"
                   className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   <svg
@@ -38,7 +38,7 @@ export default function Sidebar({as}) {
               </li>
               <li  className={as == "/generateqrcode" ?"bg-gray-300 rounded-lg" : ""}>
                 <Link
-                  href="/generateqrcode"
+                  href="/admin/generateqrcode"
                   className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   <svg
@@ -58,7 +58,7 @@ export default function Sidebar({as}) {
               </li>
               <li  className={as == "/downloadqrcode" ?"bg-gray-300 rounded-lg" : ""}>
                 <Link
-                  href="/downloadqrcode"
+                  href="/admin/downloadqrcode"
                   className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   <svg

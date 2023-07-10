@@ -12,7 +12,7 @@ function signup({ csrfToken }) {
 
   async function handleSignup() {
     // console.log("yo");
-    const response = await fetch("/api/user", {
+    const response = await fetch("/api/admin/user", {
       method: "POST",
       body: JSON.stringify({username, email, password}),
       headers: {
@@ -25,7 +25,7 @@ function signup({ csrfToken }) {
     if (!response.ok) {
       setError(data.message || "Something went wrong!")
     } else{
-      router.replace({ pathname:"/auth/signin", query:{ message:'User registered successful' }})
+      router.replace({ pathname:"/admin/auth/signin", query:{ message:'User registered successful' }})
     }
     
   }
@@ -63,7 +63,7 @@ function signup({ csrfToken }) {
         placeholder="**********"
       />
       <button onClick={() => handleSignup()}>Sign up</button>
-      <button onClick={() => router.replace("/auth/signin")}>
+      <button onClick={() => router.replace("/admin/auth/signin")}>
         Login insted
       </button>
     </div>
@@ -76,12 +76,16 @@ export async function getServerSideProps(context) {
   const { req } = context;
   const session = await getSession({ req });
 
-  if (session) {
+  if (session?.user.role === 'admin') {
     return {
-      redirect: { destination: "/" },
+      redirect: { destination: "/admin/dashboard" },
     };
+  } 
+  if (session?.user.role === 'user') {
+    return {
+      redirect: { destination: "/user" },
+    }; 
   }
-
   return {
     props: {
       // providers: await providers(context),

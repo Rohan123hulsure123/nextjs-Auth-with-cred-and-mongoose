@@ -15,10 +15,15 @@ export default function Component() {
 
 export async function getServerSideProps(ctx) {
   const session = await getSession(ctx);
-  if (session) {
+  if (session?.user.role === 'admin') {
     return {
-      redirect: { destination: "/dashboard" },
+      redirect: { destination: "/admin/dashboard" },
     };
+  } 
+  if (session?.user.role === 'user') {
+    return {
+      redirect: { destination: "/user" },
+    }; 
   }
-  return { redirect: { destination: "/auth/signin" },props: {  } };
+  return { redirect: { destination: "/admin/auth/signin" },props: {  } };
 }

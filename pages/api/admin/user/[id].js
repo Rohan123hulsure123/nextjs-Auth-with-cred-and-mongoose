@@ -1,7 +1,7 @@
-import dbConnect from "../../../lib/dbConnect";
-import User from "../../../models/user";
+import dbConnect from "../../../../lib/dbConnect";
+import User from "../../../../models/user";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]";
+import { authOptions } from "../../auth/[...nextauth]";
 
 export default async function handler(req, res) {
   const {
@@ -9,8 +9,9 @@ export default async function handler(req, res) {
     method,
   } = req;
   const session = await getServerSession(req, res, authOptions);
+  // console.log(session.user);
   await dbConnect();
-  if (session) {
+  if (session?.user.role === 'admin') {
     switch (method) {
       case "GET" /* Get a model by its ID */:
         try {

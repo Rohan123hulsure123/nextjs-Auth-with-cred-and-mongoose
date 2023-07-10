@@ -1,16 +1,17 @@
 import { useSession, signIn, signOut, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Navbar from "../components/navbar";
-import Sidebar from "../components/sidebar";
+import Navbar from "../../components/navbar";
+import Sidebar from "../../components/sidebar";
 import Head from "next/head";
-import Spinner from "../components/spinner";
+import Spinner from "../../components/spinner";
 
 export default function Component() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [data, setData] = useState({ files: [] });
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState("false");
   //   const [newerFiles, setNewerFiles] = useState(1);
   /*
     #TODO
@@ -20,34 +21,40 @@ export default function Component() {
     find a way to impliment datatables in this 
  */
   async function fetchData() {
-    const response = await fetch("/api/qrcode/1", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      throw new Error(result.message || "Something went wrong!");
-    } else {
-      // console.log(result);
-      if (result.files.length > 0) {
-        // console.log(result);
-        setData(result);
-        // console.log(data);
-        setMessage("");
+    try {
+      setLoading("true")
+      const response = await fetch("/api/admin/qrcode/1", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      const result = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(result.message || "Something went wrong!");
       } else {
-        setMessage("No files to download.");
+        // console.log(result);
+        if (result.files.length > 0) {
+          // console.log(result);
+          setData(result);
+          setLoading("false")
+          // console.log(data);
+          setMessage("");
+        } else {
+          setMessage("No files to download.");
+        }
       }
+    } catch (error) {
+      console.log(error);
     }
   }
   useEffect(() => {
     fetchData();
   }, []);
 
-  if (session) {
+  if (session?.user.role === 'admin') {
     // console.log(session);
     return (
       <>
@@ -55,7 +62,7 @@ export default function Component() {
          {message? message.message + " : " + message.test:""}
         <button onClick={() => signOut()}>Sign out</button> */}
         <Head>
-          <title>PawFurEver | Generate Qr code</title>
+          <title>PawFurEver | Download QR code</title>
         </Head>
         <Navbar />
         <Sidebar as="/downloadqrcode" />
@@ -65,6 +72,7 @@ export default function Component() {
             <div className=" p-4 ">
               <h1 className="text-3xl p-0">Download QR Tag</h1>
               {/* <TableComponent data={data}/> */}
+              <Spinner loading={loading} />
               <div
                 className={`p-2 m-5 ${data.files.length == 0 ? "hidden" : ""}`}
               >
@@ -112,6 +120,10 @@ export default function Component() {
         </div>
       </>
     );
+  }else {
+    return (<div className="text-3xl flex items-center justify-center h-screen">
+      <h1 className="p-0 m-0">Unauthorized Access</h1>
+    </div>)
   }
   // return (
   //     <>

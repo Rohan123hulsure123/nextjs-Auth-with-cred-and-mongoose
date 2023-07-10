@@ -1,10 +1,10 @@
 import { useSession, signIn, signOut, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Navbar from "../components/navbar";
-import Sidebar from "../components/sidebar";
+import Navbar from "../../components/navbar";
+import Sidebar from "../../components/sidebar";
 import Head from "next/head";
-import Spinner from "../components/spinner";
+import Spinner from "../../components/spinner";
 import { toast } from "react-toastify";
 
 export default function Component() {
@@ -33,7 +33,7 @@ export default function Component() {
         // Send Data to server
         setLoading("true");
         setMessage("QR code is being created please wait.");
-        const response = await fetch("/api/qrcode", {
+        const response = await fetch("/api/admin/qrcode/new2", {
           method: "POST",
           body: JSON.stringify({ numberOfQRTags, QRTagsForWhom, QRCodeType }),
           headers: {
@@ -64,7 +64,7 @@ export default function Component() {
     } catch (error) {
       console.log(error);
     }
-  }
+  } 
 
   // setTimeout(() => {
   // setLoading("false");
@@ -99,7 +99,7 @@ export default function Component() {
   //   }
   //   fetchData();
   // }, []);
-  if (session) {
+  if (session?.user.role === 'admin') {
     // console.log(session);
     return (
       <>
@@ -107,7 +107,7 @@ export default function Component() {
          {message? message.message + " : " + message.test:""}
         <button onClick={() => signOut()}>Sign out</button> */}
         <Head>
-          <title>PawFurEver | Generate Qr code</title>
+          <title>PawFurEver | Generate QR code</title>
         </Head>
         <Navbar />
         <Sidebar as="/generateqrcode" />
@@ -221,6 +221,10 @@ export default function Component() {
         </div>
       </>
     );
+  } else {
+    return (<div className="text-3xl flex items-center justify-center h-screen">
+      <h1 className="p-0 m-0">Unauthorized Access</h1>
+    </div>)
   }
   // return (
   //     <>

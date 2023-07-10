@@ -1,8 +1,8 @@
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]";
+import { authOptions } from "../../auth/[...nextauth]";
 
-import dbConnect from "../../../lib/dbConnect";
-import QRCodeZip from "../../../models/qrCodeZip";
+import dbConnect from "../../../../lib/dbConnect";
+import QRCodeZip from "../../../../models/qrCodeZip";
 
 import admin from "firebase-admin";
 
@@ -33,7 +33,7 @@ export default async function handler(req, res) {
   await dbConnect();
 
   //   console.log(n);
-  if (session) {
+  if (session?.user.role === 'admin') {
     switch (method) {
       case "GET":
         try {

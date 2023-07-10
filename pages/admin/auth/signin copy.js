@@ -1,4 +1,5 @@
-import { providers, signIn, getSession, getCsrfToken } from "next-auth/react";
+import {  getProviders ,signIn, getSession, getCsrfToken } from "next-auth/react";
+
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -12,7 +13,8 @@ function signin({ csrfToken }) {
   const { session } = getSession();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-
+  // console.log(Provider);
+  
   return (
     <div
       className=" h-screen flex flex-wrap items-center"
@@ -41,7 +43,7 @@ function signin({ csrfToken }) {
                 password,
                 redirect: false,
               });
-              // console.log(res);
+              
               if (res.error) {
                 setError(res.error);
                 toast(
@@ -54,7 +56,8 @@ function signin({ csrfToken }) {
                 );
                 setLoading(false);
               } else {
-                router.replace("/dashboard");
+                // console.log(res);
+                router.replace("/admin/dashboard");
               }
             } catch (error) {
               setLoading(false);
@@ -135,7 +138,7 @@ export async function getServerSideProps(context) {
 
   if (session) {
     return {
-      redirect: { destination: "/" },
+      redirect: { destination: "/admin/dashboard" },
     };
   }
 

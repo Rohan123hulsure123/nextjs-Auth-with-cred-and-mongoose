@@ -1,9 +1,10 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import FacebookProvider from "next-auth/providers/facebook";
+import GoogleProvider from "next-auth/providers/google";
 import dbConnect from "../../../lib/dbConnect";
 import User from "../../../models/user";
 import bcrypt from "bcrypt";
-
 
 async function chechPassword(credPAss, userPass) {
   //check password
@@ -18,6 +19,21 @@ export const authOptions = {
 
   // Configure one or more authentication providers
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      profile(profile) {
+        // console.log(profile);
+        return {
+          // _id: profile.sub,
+          id: profile.sub,
+          username: profile.name,
+          email: profile.email,
+          image: profile.picture,
+          role: "user",
+        };
+      },
+    }),
     CredentialsProvider({
       // The name to display on the sign in form (e.g. "Sign in with...")
       id: "Credentials",
@@ -31,28 +47,32 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        return await dbConnect().then(async ()=>{
-          // Add logic here to look up the user from the credentials supplied
-        const user = await User.findOne({ email: credentials.email });
-        // console.log(user);
-        // console.log(process.env.NEXTAUTH_SECRET);
-        if (!user) {
-          return null;
-        }
-        const result = await chechPassword(credentials.password, user.password);
-        if (result) {
-          // Any object returned will be saved in `user` property of the JWT
-          // console.log(user);
+        return await dbConnect()
+          .then(async () => {
+            // Add logic here to look up the user from the credentials supplied
+            const user = await User.findOne({ email: credentials.email });
+            // console.log(user);
+            // console.log(process.env.NEXTAUTH_SECRET);
+            if (!user) {
+              return null;
+            }
+            const result = await chechPassword(
+              credentials.password,
+              user.password
+            );
+            if (result) {
+              // Any object returned will be saved in `user` property of the JWT
+              // console.log(user);
 
-          return user;
-        } else {
-          return null;
-        }
-        }).catch(err=>{
-          console.error(err);
-          return null;
-        });
-        
+              return user;
+            } else {
+              return null;
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+            return null;
+          });
       },
     }),
   ],
@@ -62,17 +82,19 @@ export const authOptions = {
     // This could be avatars, role, display name, etc...
     async jwt({ token, user }) {
       if (user) {
+        // console.log("here" + user);
         token.user = {
-          _id: user._id,
+          _id: user._id ? user._id : user.id,
           username: user.username,
           email: user.email,
+          image: user.picture,
           role: user.role,
         };
       }
       return token;
     },
     // If we want to access our extra user info from sessions we have to pass it the token here to get them in sync:
-    async session ({ session, token }){
+    async session({ session, token }) {
       if (token) {
         session.user = token.user;
       }
@@ -83,7 +105,7 @@ export const authOptions = {
     colorScheme: "dark",
   },
   pages: {
-    signIn: "/auth/signin",
+    signIn: "/admin/auth/signin",
     // error: '/auth/error',
     // signOut: '/auth/signout',
     // error: '/auth/error', // Error code passed in query string as ?error=

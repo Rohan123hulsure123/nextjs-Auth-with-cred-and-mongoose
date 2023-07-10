@@ -1,17 +1,17 @@
 import { createCanvas, loadImage } from "canvas";
 import { getServerSession } from "next-auth/next";
 
-import dbConnect from "../../../lib/dbConnect";
-import QRCodeZip from "../../../models/qrCodeZip";
-import QRCodeEntry from "../../../models/qrCodeEntry";
+import dbConnect from "../../../../lib/dbConnect";
+import QRCodeZip from "../../../../models/qrCodeZip";
+import QRCodeEntry from "../../../../models/qrCodeEntry";
 
-import { authOptions } from "../auth/[...nextauth]";
+import { authOptions } from "../../auth/[...nextauth]";
 import { QRCodeCanvas } from "@loskir/styled-qr-code-node";
 // import { join } from "path";
 import archiver from "archiver";
 // import fs from "fs";
 import admin from "firebase-admin";
-import { Generate_UID_16digit, Activation_code } from "../../../lib/helper";
+import { Generate_UID_16digit, Activation_code } from "../../../../lib/helper";
 
 // Initialize Firebase Admin SDK
 const serviceAccount = JSON.parse(
@@ -28,6 +28,27 @@ if (!admin.apps.length) {
 }
 
 const bucket = admin.storage().bucket();
+
+async function generateQRCode(data){
+    // 1_outof_1_TestQRWithoutLogo13_244cb02a3b354103.svg working model
+        try {
+          const response = await fetch(`https://api.qrserver.com/v1/create-qr-code/?&ecc=q&format=svg&color=0C134F&data=${encodeURIComponent("www.pawfurever.com/"+data)}`);
+          
+          if (response.ok) {
+            const data = await response.text(); // Read the response data as text
+            const buffer = Buffer.from(data, 'utf-8');
+            // Process the data
+            // console.log(data);
+            return data
+          } else {
+            // Handle the error if the request was not successful
+            throw new Error('Request failed with status: ' + response.status);
+          }
+        } catch (error) {
+          // Handle any errors that occur during the request
+          console.error(error);
+        }      
+}
 
 export default async function handler(req, res) {
   const {
@@ -70,49 +91,66 @@ export default async function handler(req, res) {
             const activationCode_6Digit = await Activation_code(); //6 digits Activation code to activate individual QR tag
 
             //Create canvas
-            const canvas = createCanvas(200, 220, QRCodeType.toLowerCase());
-            const ctx = canvas.getContext("2d");
-            ctx.clearRect(0, 0, 220, 220);
+            // const canvas = createCanvas(200, 220, QRCodeType.toLowerCase());
+            // const ctx = canvas.getContext("2d");
+            // ctx.clearRect(0, 0, 220, 220);
 
+            const qrCode = await generateQRCode(uid16Digit);
+
+            // Read the SVG file
+            // const svgFile = qrCode;
+
+            // Append the text element to the SVG XML
+            
+	
+            const modifiedSvg = qrCode.replace("</svg>", `<text x=\"70\" y=\"252\" fill=\"#0C134F\">${activationCode_6Digit.split("").join(" ")}</text></svg>`);
+            const sizeModification = modifiedSvg.replace(`<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="232" height="232">`, `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="232" height="252">`)
+
+            // Write the modified SVG back to a file or use it as needed
+            // fs.writeFileSync("path/to/save/modified.svg", modifiedSvg, "utf8");
+
+            // console.log(qrCode);
             //Create QR code
-            const qrCode = new QRCodeCanvas({
-              width: 200,
-              height: 200,
-              data: `https://qr.mowat.dev/view/${uid16Digit}`,
+            // const qrCode = new QRCodeCanvas({
+            //   width: 200,
+            //   height: 200,
+            //   data: `https://qr.mowat.dev/view/${uid16Digit}`,
 
-              dotsOptions: {
-                color: "#0C134F",
-                type: "square",
-              },
-              // imageOptions: {
-              //   crossOrigin: "anonymous",
-              //   imageSize: 0.4,
-              // },
-              qrOptions: {
-                errorCorrectionLevel: "Q",
-              },
-            });
+            //   dotsOptions: {
+            //     color: "#0C134F",
+            //     type: "square",
+            //   },
+            //   image: "public/logo.png",
+            //   // imageOptions: {
+            //   //   crossOrigin: "anonymous",
+            //   //   imageSize: 0.4,
+            //   // },
+            //   qrOptions: {
+            //     errorCorrectionLevel: "Q",
+            //   },
+            // });
 
-            const qrCodeImageData = await qrCode.toBuffer(
-              QRCodeType.toLowerCase()
-            );
-            // console.log(qrCodeImageData);
+            // const qrCodeImageData = await qrCode.toBuffer(
+            //   // QRCodeType.toLowerCase()
+            // );
+            // console.log(qrCode);
             //Draw Qr code on Canvas
-            const qrCodeImage = await loadImage(qrCodeImageData);
-            // console.log(qrCodeImage);
-            ctx.drawImage(qrCodeImage, 0, 0, 200, 200);
+            // const qrCodeImage = await loadImage(qrCode);
+            // // console.log(qrCodeImage);
+            // ctx.drawImage(qrCodeImage, 0, 0, 200, 200);
 
-            //Add logo to middle of QR code
-            const qrLogo = await loadImage("public/logo.png");
-            ctx.drawImage(qrLogo, 72, 72, 55, 55);
+            // // Add logo to middle of QR code
+            // const qrLogo = await loadImage("public/logo.png");
+            // ctx.drawImage(qrLogo, 72, 72, 55, 55);
 
-            //Add 6 digit activation code at bottom
-            ctx.font = "Sans Bold 30px";
-            ctx.fillText(activationCode_6Digit.split("").join(" "), 75, 215);
+            // //Add 6 digit activation code at bottom
+            // ctx.font = "Sans Bold 30px";
+            // ctx.fillText(activationCode_6Digit.split("").join(" "), 75, 215);
 
-            const canvasData = canvas.toBuffer();
-
+            // const canvasData = canvas.toBuffer();
+            const canvasData = await Buffer.from(sizeModification, 'utf-8');
             archive.append(canvasData, {
+              // name: `${i}_outof_${qrCodeCount}_${QRTagsForWhom}_${uid16Digit}.${QRCodeType.toLowerCase()}`,
               name: `${i}_outof_${qrCodeCount}_${QRTagsForWhom}_${uid16Digit}.${QRCodeType.toLowerCase()}`,
             });
 

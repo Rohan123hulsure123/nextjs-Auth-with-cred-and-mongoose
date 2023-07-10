@@ -3,13 +3,15 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 // import Link from "next/link";
 import Head from "next/head";
-import Navbar from "../components/navbar";
-import Sidebar from "../components/sidebar";
+import Navbar from "../../components/navbar";
+import Sidebar from "../../components/sidebar";
 
 export default function Component() {
   const { data: session, status } = useSession();
   const [message, setMessage] = useState();
   const router = useRouter();
+  // console.log(session.user.role);
+  // console.log(session.user.role != "admin");
   //   useEffect( ()=>{
   //     async function fetchData(message) {
   //       const response = await fetch('/api/test', {
@@ -31,13 +33,13 @@ export default function Component() {
   //     }
   //     fetchData()
   //   },[])
-  if (session) {
+  if (session?.user.role === 'admin') {
     // console.log(session);
 
     return (
       <>
         <Head>
-          <title>PawFurEver | Dashboard</title>
+          <title>PawFurEver | Dashboard </title>
         </Head>
 
         <Navbar />
@@ -59,6 +61,12 @@ export default function Component() {
         </div>
       </>
     );
+  } else {
+    return (<div className="text-3xl flex items-center justify-center h-screen">
+      <h1 className="p-0 m-0">Unauthorized Access</h1> &nbsp;
+      
+      {/* <button className="btn bg-gray-900 text-white" onClick={()=>signOut()}>signOut</button> */}
+    </div>)
   }
 }
 
